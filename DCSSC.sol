@@ -74,13 +74,26 @@ contract DCSSC {
         DCSSCowner = _address;
     }
     
-    function getDCSSCOwner () public view returns (address _address) {
+    function getDCSSCOwner () public view returns (address) {
         return DCSSCowner;
     }
     
     function setCommision (uint _commision) onlyOwner public {
-         commision = _commision;
+        commision = _commision;
     }
+    
+    function getCommision () public view returns (uint)  {
+        return commision;
+    }
+    
+    function setNewDCSSC (address _newDCSSC) onlyOwner public {
+        newDCSSC = _newDCSSC;
+    }
+    
+    function getNewDCSSC () public view returns (address)  {
+        return newDCSSC;
+    }
+    
     
     function() external payable {}
     
