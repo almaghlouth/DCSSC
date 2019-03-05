@@ -38,12 +38,12 @@ contract DCSSC {
     
     mapping(uint => mapping (uint => Content)) product;
 
-    function createItem (string memory _title, string memory _desc, uint _version, string memory _hash, string memory _link, uint _price, uint _royality) public returns (uint id, string memory title) {
+    function createItem (string memory _title, string memory _desc, uint _version, string memory _hash, string memory _link, uint _price, uint _royality) public returns (uint id, uint serial, string memory title) {
         uint256 _count = contentCounter;
         Content memory item = Content(_title,_desc,_version,_hash,0,_link,msg.sender,address(0),address(0),msg.sender,_price,_royality);
         product[_count][0] = item;
         contentCounter++;
-        return (_count, product[_count][0].title);
+        return (_count, 0, product[_count][0].title);
     }
     
     function getItem (uint _id, uint _serial) public view returns (
@@ -76,6 +76,10 @@ contract DCSSC {
     
     function getDCSSCOwner () public view returns (address _address) {
         return DCSSCowner;
+    }
+    
+    function setCommision (uint _commision) onlyOwner public {
+         commision = _commision;
     }
     
     function() external payable {}
