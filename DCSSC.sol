@@ -4,7 +4,7 @@ contract DCSSC {
     
     address DCSSCowner;
     address newDCSSC;
-    int256 commision;
+    uint256 commision;
     //contentForSale
     //contentMassSale
     //itemForSale
@@ -24,6 +24,17 @@ contract DCSSC {
     }
     
     uint contentCounter = 0;
+    
+    modifier onlyOwner {
+        require(msg.sender == DCSSCowner);
+        _;
+    }
+    
+    constructor (uint _commision) public {
+        DCSSCowner = msg.sender;
+        newDCSSC = address(0);
+        commision = _commision;
+    }
     
     mapping(uint => mapping (uint => Content)) product;
 
@@ -57,7 +68,15 @@ contract DCSSC {
         return (product[_id][_serial].creator, 
             product[_id][_serial].publisher, product[_id][_serial].seller,product[_id][_serial].owner, product[_id][_serial].price, product[_id][_serial].royality);
     }
-        
+    
+    
+    function setDCSSCOwner (address _address) onlyOwner public {
+        DCSSCowner = _address;
+    }
+    
+    function getDCSSCOwner () public view returns (address _address) {
+        return DCSSCowner;
+    }
     
     function() external payable {}
     
