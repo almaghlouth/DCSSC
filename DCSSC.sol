@@ -5,7 +5,6 @@ contract DCSSC {
     address DCSSCowner;
     address newDCSSC;
     uint256 commision;
-    //contentForSale
     //contentMassSale
     //itemForSale
     struct Content {
@@ -16,12 +15,22 @@ contract DCSSC {
         uint256 serialNumber;
         string link;
         address creator;
+        address authenticator;
         address publisher;
         address seller;
         address owner;
         uint256 price;
-        uint256 royality;
     }
+    
+    struct contentForSale {
+        uint id;
+        bool auction;
+        bool awarded;
+        uint price;
+        uint royality;
+    }
+    
+    mapping (uint => contentForSale) contentsForSale;
     
     uint contentCounter = 0;
     
@@ -38,9 +47,9 @@ contract DCSSC {
     
     mapping(uint => mapping (uint => Content)) product;
 
-    function createItem (string memory _title, string memory _desc, uint _version, string memory _hash, string memory _link, uint _price, uint _royality) public returns (uint id, uint serial, string memory title) {
+    function createItem (string memory _title, string memory _desc, uint _version, string memory _hash, string memory _link) public returns (uint id, uint serial, string memory title) {
         uint256 _count = contentCounter;
-        Content memory item = Content(_title,_desc,_version,_hash,0,_link,msg.sender,address(0),address(0),msg.sender,_price,_royality);
+        Content memory item = Content(_title,_desc,_version,_hash,0,_link,msg.sender,address(0),address(0),address(0),msg.sender,0);
         product[_count][0] = item;
         contentCounter++;
         return (_count, 0, product[_count][0].title);
@@ -59,14 +68,14 @@ contract DCSSC {
         
     function trackItem (uint _id, uint _serial) public view returns (
         address creator,
+        address authenticator,
         address publisher,
         address seller,
         address owner,
-        uint256 price,
-        uint256 royality
+        uint256 price
     ) {
-        return (product[_id][_serial].creator, 
-            product[_id][_serial].publisher, product[_id][_serial].seller,product[_id][_serial].owner, product[_id][_serial].price, product[_id][_serial].royality);
+        return (product[_id][_serial].creator, product[_id][_serial].authenticator,
+            product[_id][_serial].publisher, product[_id][_serial].seller, product[_id][_serial].owner, product[_id][_serial].price);
     }
     
     
@@ -94,6 +103,22 @@ contract DCSSC {
         return newDCSSC;
     }
     
+    //add event
+    function putContentForSale (uint _id, uint _price, uint _royality) public {
+        if ((msg.sender == product[_id][0].creator) && (product[_id][0].publisher == address(0)) && (contentsForSale[_id].awarded == false) && (contentsForSale[_id].auction == false) ) {
+            contentsForSale[_id].id = _id;
+            contentsForSale[_id].auction = true;
+            contentsForSale[_id].price = _price;
+            contentsForSale[_id].royality = _royality;
+        }
+    }
+    
+    //add event
+    function authenticate (uint _id/*, string memory _hash*/) public {
+        //if (keccak256(_hash) == keccak256(product[_id][0].contentHash)){
+            product[_id][0].authenticator = msg.sender;
+        //}
+    }
     
     function() external payable {}
     
