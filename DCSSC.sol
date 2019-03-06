@@ -5,8 +5,6 @@ contract DCSSC {
     address payable DCSSCowner;
     address newDCSSC;
     uint256 commision;
-    //contentMassSale
-    //itemForSale
     struct Content {
         string title;
         string description;
@@ -36,13 +34,6 @@ contract DCSSC {
     }
     
     mapping (uint => contentForSale) contentsForSale;
-    
-    /*
-    struct massBuy {
-        uint id;
-        address seller;
-        uint quantity;
-    }*/
     
     mapping (uint => mapping (address => uint)) massBuyStock;
     
