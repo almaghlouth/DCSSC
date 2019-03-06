@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 
 contract DCSSC {
     
-    address DCSSCowner;
+    address payable DCSSCowner;
     address newDCSSC;
     uint256 commision;
     //contentMassSale
@@ -14,25 +14,32 @@ contract DCSSC {
         string contentHash;
         uint256 serialNumber;
         string link;
-        address creator;
+        address payable creator;
         address authenticator;
-        address publisher;
-        address seller;
+        address payable publisher;
+        address payable seller;
         address owner;
         uint256 price;
     }
+    
+    uint contentCounter = 0;
     
     struct contentForSale {
         uint id;
         bool auction;
         bool awarded;
+        bool massSale;
         uint price;
         uint royality;
+        string authHash;
+        uint currentSerial;
     }
     
     mapping (uint => contentForSale) contentsForSale;
     
-    uint contentCounter = 0;
+    mapping (uint => mapping (address => uint)) massBuyStock;
+
+    mapping (uint => mapping (uint => Content)) product;
     
     modifier onlyOwner {
         require(msg.sender == DCSSCowner);
@@ -45,7 +52,7 @@ contract DCSSC {
         commision = _commision;
     }
     
-    mapping(uint => mapping (uint => Content)) product;
+    
 
     function createItem (string memory _title, string memory _desc, uint _version, string memory _hash, string memory _link) public returns (uint id, uint serial, string memory title) {
         uint256 _count = contentCounter;
@@ -79,7 +86,7 @@ contract DCSSC {
     }
     
     
-    function setDCSSCOwner (address _address) onlyOwner public {
+    function setDCSSCOwner (address payable _address) onlyOwner public {
         DCSSCowner = _address;
     }
     
@@ -95,7 +102,7 @@ contract DCSSC {
         return commision;
     }
     
-    function setNewDCSSC (address _newDCSSC) onlyOwner public {
+    function setNewDCSSC (address payable _newDCSSC) onlyOwner public {
         newDCSSC = _newDCSSC;
     }
     
@@ -110,14 +117,77 @@ contract DCSSC {
             contentsForSale[_id].auction = true;
             contentsForSale[_id].price = _price;
             contentsForSale[_id].royality = _royality;
+            contentsForSale[_id].currentSerial = 1;
+        }
+    }
+    
+    function getContentForSale (uint _id) public view returns (
+        uint id,
+        bool auction,
+        bool awarded,
+        uint price,
+        uint royality,
+        string memory authHash
+        ){
+        return (contentsForSale[_id].id, contentsForSale[_id].auction,contentsForSale[_id].awarded,contentsForSale[_id].price,contentsForSale[_id].royality,contentsForSale[_id].authHash);
+    }
+    
+    //add event
+    function authenticate (uint _id, string memory _hash) public {
+            contentsForSale[_id].authHash = _hash;
+            product[_id][0].authenticator = msg.sender;
+    }
+    
+    //add event
+    function buyContentForSale (uint _id) payable public  {
+        if ((msg.value >= contentsForSale[_id].price) && (product[_id][0].publisher == address(0)) 
+        && (contentsForSale[_id].awarded == false) && (contentsForSale[_id].auction == true) ) {
+            product[_id][0].creator.transfer(msg.value);
+            contentsForSale[_id].awarded = true;
+            product[_id][0].publisher = msg.sender; 
         }
     }
     
     //add event
-    function authenticate (uint _id/*, string memory _hash*/) public {
-        //if (keccak256(_hash) == keccak256(product[_id][0].contentHash)){
-            product[_id][0].authenticator = msg.sender;
-        //}
+    function putMassSale (uint _id, uint _itemPrice) public {
+        if ((product[_id][0].publisher == msg.sender) && (contentsForSale[_id].awarded == true) && (contentsForSale[_id].massSale == false)) {
+            product[_id][0].price = _itemPrice + contentsForSale[_id].royality + commision;
+            contentsForSale[_id].massSale = true;
+        }
+    }
+    
+    function estimateMassSale (uint _id, uint _quantity) public view returns (uint total) {
+        return (product[_id][0].price * _quantity);
+    }
+    
+    //add event
+    function buyMassSale (uint _id, uint _quantity) public payable {
+        if ((contentsForSale[_id].massSale == true) && (msg.value == estimateMassSale(_id,_quantity))) {
+            product[_id][0].publisher.transfer(msg.value);
+            massBuyStock[_id][msg.sender] = _quantity;
+        }
+    }
+    
+    //add event
+    function sellItem (uint _id, uint _itemPrice) public returns (uint serialNumber) {
+        if (massBuyStock[_id][msg.sender] > 0){
+            uint inc = contentsForSale[_id].currentSerial;
+            product[_id][inc] = product[_id][0];
+            product[_id][inc].seller = msg.sender;
+            product[_id][inc].price = _itemPrice;
+            contentsForSale[_id].currentSerial++;
+            massBuyStock[_id][msg.sender]--;
+            return inc;
+        }
+    }
+    
+    function buyItem (uint _id, uint _serial) public payable {
+        if ((_serial != 0) && (product[_id][_serial].owner == address(0)) && (product[_id][_serial].price == msg.value)){
+            DCSSCowner.transfer(commision);
+            product[_id][_serial].creator.transfer(contentsForSale[_id].royality);
+            product[_id][_serial].seller.transfer(msg.value - commision - contentsForSale[_id].royality);
+            product[_id][_serial].owner = msg.sender;
+        }
     }
     
     function() external payable {}
