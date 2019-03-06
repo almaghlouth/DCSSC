@@ -37,9 +37,14 @@ contract DCSSC {
     
     mapping (uint => contentForSale) contentsForSale;
     
+    /*
+    struct massBuy {
+        uint id;
+        address seller;
+        uint quantity;
+    }*/
+    
     mapping (uint => mapping (address => uint)) massBuyStock;
-
-    mapping (uint => mapping (uint => Content)) product;
     
     modifier onlyOwner {
         require(msg.sender == DCSSCowner);
@@ -52,7 +57,7 @@ contract DCSSC {
         commision = _commision;
     }
     
-    
+    mapping(uint => mapping (uint => Content)) product;
 
     function createItem (string memory _title, string memory _desc, uint _version, string memory _hash, string memory _link) public returns (uint id, uint serial, string memory title) {
         uint256 _count = contentCounter;
@@ -125,17 +130,20 @@ contract DCSSC {
         uint id,
         bool auction,
         bool awarded,
+        bool massSale,
         uint price,
         uint royality,
         string memory authHash
         ){
-        return (contentsForSale[_id].id, contentsForSale[_id].auction,contentsForSale[_id].awarded,contentsForSale[_id].price,contentsForSale[_id].royality,contentsForSale[_id].authHash);
+        return (contentsForSale[_id].id, contentsForSale[_id].auction,contentsForSale[_id].awarded,contentsForSale[_id].massSale,contentsForSale[_id].price,contentsForSale[_id].royality,contentsForSale[_id].authHash);
     }
     
     //add event
     function authenticate (uint _id, string memory _hash) public {
+        if (keccak256(abi.encodePacked(_hash)) == keccak256(abi.encodePacked(product[_id][0].contentHash))){
             contentsForSale[_id].authHash = _hash;
             product[_id][0].authenticator = msg.sender;
+        }
     }
     
     //add event
@@ -182,7 +190,8 @@ contract DCSSC {
     }
     
     function buyItem (uint _id, uint _serial) public payable {
-        if ((_serial != 0) && (product[_id][_serial].owner == address(0)) && (product[_id][_serial].price == msg.value)){
+        if ((_serial != 0) && (product[_id][_serial].owner == address(0)) && (product[_id][_serial].price == msg.value)
+        && (contentsForSale[_id].massSale == true) && (product[_id][_serial].seller != address(0))  ){
             DCSSCowner.transfer(commision);
             product[_id][_serial].creator.transfer(contentsForSale[_id].royality);
             product[_id][_serial].seller.transfer(msg.value - commision - contentsForSale[_id].royality);
