@@ -65,7 +65,7 @@ contract DCSSC {
     mapping(uint => mapping (uint => Content)) product;
 
     function createItem (string memory _title, string memory _desc, uint _version, string memory _hash, string memory _link) public returns (uint id, uint serial, string memory title) {
-        if (newDCSSC != address(0)){
+        if (newDCSSC == address(0)){
         uint256 _count = contentCounter;
         Content memory item = Content(_title,_desc,_version,_hash,0,_link,msg.sender,address(0),address(0),address(0),msg.sender,0);
         product[_count][0] = item;
@@ -146,7 +146,7 @@ contract DCSSC {
     }
     
     function authenticate (uint _id, string memory _hash) public {
-        if ((keccak256(abi.encodePacked(_hash)) == keccak256(abi.encodePacked(product[_id][0].contentHash))) && (product[_id][0].authenticator == address(0))){
+        if ((keccak256(abi.encodePacked(_hash)) == keccak256(abi.encodePacked(product[_id][0].contentHash))) && (product[_id][0].authenticator == address(0)) && (contentsForSale[_id].auction == true)){
             contentsForSale[_id].authHash = _hash;
             product[_id][0].authenticator = msg.sender;
             emit ContentAuthenticated(_id);
