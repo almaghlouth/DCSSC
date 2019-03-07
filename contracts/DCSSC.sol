@@ -56,10 +56,10 @@ contract DCSSC {
     
     event ItemSold(uint id, uint serial);
     
-    constructor (uint _commision) public {
+    constructor () public {
         DCSSCowner = msg.sender;
         newDCSSC = address(0);
-        commision = _commision;
+        commision = 0;
     }
     
     mapping(uint => mapping (uint => Content)) product;
