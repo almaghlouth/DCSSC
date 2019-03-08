@@ -114,7 +114,7 @@ contract DCSSC {
         return commision;
     }
     
-    function setNewDCSSC (address payable _newDCSSC) onlyOwner public {
+    function setNewDCSSC (address _newDCSSC) onlyOwner public {
         newDCSSC = _newDCSSC;
     }
     
@@ -171,8 +171,12 @@ contract DCSSC {
         }
     }
     
-    function estimateMassSale (uint _id, uint _quantity) public view returns (uint total) {
+    function estimateMassSale (uint _id, uint _quantity) public view returns (uint) {
         return (product[_id][0].price * _quantity);
+    }
+
+    function checkStock (uint _id, address _address) public view returns (uint) {
+        return massBuyStock[_id][_address];
     }
     
     function buyMassSale (uint _id, uint _quantity) public payable {
@@ -188,6 +192,7 @@ contract DCSSC {
             uint _inc = contentsForSale[_id].currentSerial;
             product[_id][_inc] = product[_id][0];
             product[_id][_inc].seller = msg.sender;
+            product[_id][_inc].owner = address(0);
             product[_id][_inc].price = _itemPrice;
             contentsForSale[_id].currentSerial++;
             massBuyStock[_id][msg.sender]--;
