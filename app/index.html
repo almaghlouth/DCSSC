@@ -1,0 +1,123 @@
+<!-- This UI web page template got recycled from project 5 and extended to support testing the current project -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Digital Contents Simple Supply chain</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <script src="./app.js"></script>
+</head>
+
+<body>
+
+    <h1>Digital Contents Simple Supply chain</h1>
+    <span id="details0" onload="App.DCSSC()"></span><br><br>
+    <hr>
+    <br>
+    <h1>Lookup item Information</h1>
+    <br><label for="id1">Item ID:</label><input type="text" id="id1"></input>
+    <br><label for="serial1">Serial Number:</label><input type="text" id="serial"></input>
+    <br><br><button id="lookupContent1" onclick="App.lookup()">Get Details</button>
+    <br><br>
+
+    <span id="details1"></span><br><br>
+
+    <hr>
+    <br>
+    <h1>Buy an Item</h1>
+    <br><label for="id2">Item ID:</label><input type="text" id="id2"></input>
+    <br><label for="serial2">Serial Number:</label><input type="text" id="serial2"></input>
+    <br><br><button id="BuyItem3" onclick="App.buyItem()">Buy Item</button>
+    <br><br>
+
+    <span id="details2"></span><br><br>
+    <hr>
+    <br>
+    <h1>Create a Digital Content</h1>
+    <br><label for="title3">Title:</label><input type="text" id="title3"></input>
+    <br><label for="description3">Description:</label><input type="text" id="description3"></input>
+    <br><label for="version3">Version No:</label><input type="text" id="version3"></input>
+    <br><label for="hash3">Hash Value:</label><input type="text" id="Hash3"></input>
+    <br><label for="Link3">Link:</label><input type="text" id="link3"></input>
+    <br><br><button id="createContent3" onclick="App.createContent()">Create Item</button>
+    <br><br>
+
+    <span id="details3"></span><br><br>
+    <hr>
+    <br>
+    <h1>Put a Digital Content for Sale to Publishers</h1>
+    <br><label for="id4">Item ID:</label><input type="text" id="id4"></input>
+    <br><label for="ContractPrice4">Contract Price:</label><input type="text" id="ContractPrice4"></input>
+    <br><label for="Royality4">Royality:</label><input type="text" id="Royality4"></input>
+    <br><br><button id="putContract4" onclick="App.putContract()">Put it for sale</button>
+    <br><br>
+
+    <span id="details4"></span><br><br>
+    <hr>
+    <br>
+    <h1>Buy the right to publish a digital content</h1>
+    <br><label for="id5">Item ID:</label><input type="text" id="id5"></input>
+    <br><br><button id="BuyContract5" onclick="App.buyContract()">Buy Contract</button>
+    <br><br>
+
+    <span id="details5"></span><br><br>
+    <hr>
+    <br>
+    <h1>Authenticate a digital content</h1>
+    <br><label for="id6">Item ID:</label><input type="text" id="id6"></input>
+    <br><label for="hash6">Hash Value:</label><input type="text" id="hash6"></input>
+    <br><br><button id="authenticate6" onclick="App.authenticate()">Authenticate it</button>
+    <br><br>
+
+    <span id="details6"></span><br><br>
+    <hr>
+    <br>
+    <h1>Mass sell digital contents</h1>
+    <br><label for="id7">Item ID:</label><input type="text" id="id7"></input>
+    <br><label for="price7">Unit Price:</label><input type="text" id="price7"></input>
+    <br><br><button id="massSell7" onclick="App.massSell()">Sell it</button>
+    <br><br>
+
+    <span id="details7"></span><br><br>
+    <hr>
+    <br>
+    <h1>Estimate mass buy costs</h1>
+    <br><label for="id8">Item ID:</label><input type="text" id="id8"></input>
+    <br><label for="price8">Quantity:</label><input type="text" id="Quantity8"></input>
+    <br><br><button id="estimate8" onclick="App.estimate()">Get Estimate</button>
+    <br><br>
+
+    <span id="details8"></span><br><br>
+    <hr>
+    <br>
+    <h1>Mass buy digital contents</h1>
+    <br><label for="id9">Item ID:</label><input type="text" id="id9"></input>
+    <br><label for="quantity9">Quantity:</label><input type="text" id="quantity9"></input>
+    <br><br><button id="massBuy9" onclick="App.massBuy()">Buy it</button>
+    <br><br>
+
+    <span id="details9"></span><br><br>
+    <hr>
+    <br>
+    <h1>Check Seller Stock</h1>
+    <br><label for="id10">Item ID:</label><input type="text" id="id10"></input>
+    <br><label for="address10">Address:</label><input type="text" id="address10"></input>
+    <br><br><button id="checkStock9" onclick="App.checkStock()">Check Stock</button>
+    <br><br>
+
+    <span id="details9"></span><br><br>
+    <hr>
+    <br>
+    <h1>Sell an Item</h1>
+    <br><label for="id11">Item ID:</label><input type="text" id="id11"></input>
+    <br><label for="price11">Price:</label><input type="text" id="price11"></input>
+    <br><br><button id="SellItem11" onclick="App.sellItem()">Sell Item</button>
+    <br><br>
+
+    <span id="details9"></span><br><br>
+
+    <br>
+
+</body>
+
+</html>
