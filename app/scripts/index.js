@@ -78,7 +78,7 @@ const DCSSCBuyItem = async () => {
   const item1 = await instance.trackItem(id, serial, { from: account });
   await instance.BuyItem(id, serial, {
     from: account,
-    gas: 100000,
+    gasLimit: 100000,
     value: await item1[5]
   });
   const item3 = await instance.trackItem(id, serial, { from: account });
@@ -116,7 +116,10 @@ const DCSSCcreateContent = async () => {
     version,
     hash,
     link,
-    { from: account, gas: 100000 }
+    {
+      from: account,
+      gasLimit: 100000
+    }
   );
   App.setDetails(
     "<br>ID: " +
@@ -136,7 +139,7 @@ const DCSSCputContract = async () => {
   const royality = document.getElementById("Royality4").value;
   await instance.putContentForSale(id, price, royality, {
     from: account,
-    gas: 100000
+    gasLimit: 100000
   });
   const item2 = await instance.getContentForSale(id, { from: account });
   App.setDetails(
@@ -160,7 +163,7 @@ const DCSSCbuyContract = async () => {
   const item1 = await instance.getContentForSale(id, { from: account });
   await instance.buyContentForSale(id, {
     from: account,
-    gas: 100000,
+    gasLimit: 100000,
     value: await item1[4]
   });
   const item3 = await instance.trackItem(id, serial, { from: account });
@@ -189,7 +192,7 @@ const DCSSCauthenticate = async () => {
   const hash = document.getElementById("hash6").value;
   await instance.authenticate(id, hash, {
     from: account,
-    gas: 100000
+    gasLimit: 100000
   });
   const item3 = await instance.trackItem(id, serial, { from: account });
   App.setDetails(
@@ -217,7 +220,7 @@ const DCSSCmassSell = async () => {
   const price = document.getElementById("price8").value;
   await instance.putMassSale(id, price, {
     from: account,
-    gas: 100000
+    gasLimit: 100000
   });
   const item2 = await instance.getContentForSale(id, { from: account });
   App.setDetails(
@@ -260,7 +263,7 @@ const DCSSCmassBuy = async () => {
   });
   await instance.buyMassSale(id, quantity, {
     from: account,
-    gas: 100000,
+    gasLimit: 100000,
     value: await item1
   });
   const item2 = await instance.checkStock(id, account, { from: account });
