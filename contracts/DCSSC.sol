@@ -44,7 +44,7 @@ contract DCSSC {
     
     event ItemCreated(uint256 id, address _address);
 
-    event ContentPutForSale(uint256 id);
+    event ContentPutForSale(uint256 id, uint256 price, uint256 royality);
     
     event ContentAuthenticated(uint256 id);
     
@@ -132,7 +132,7 @@ contract DCSSC {
             contentsForSale[_id].price = _price;
             contentsForSale[_id].royality = _royality;
             contentsForSale[_id].currentSerial = 1;
-            emit ContentPutForSale(_id);
+            emit ContentPutForSale(_id,_price,_royality);
         }
     }
     
