@@ -54,7 +54,7 @@ contract DCSSC {
     
     event ContentMassBought(uint256 id, uint256 quantity, address _address);
     
-    event ItemPutForSale(uint256 id, uint256 serial);
+    event ItemPutForSale(uint256 id, uint256 serial, address _address);
     
     event ItemSold(uint256 id, uint256 serial);
     
@@ -204,14 +204,14 @@ contract DCSSC {
             product[_id][_inc].price = _itemPrice + commision + contentsForSale[_id].royality;
             contentsForSale[_id].currentSerial++;
             massBuyStock[_id][msg.sender]--;
-            emit ItemPutForSale(_id,_inc);
+            emit ItemPutForSale(_id,_inc,msg.sender);
             return _inc;
         }
     }
     
     function buyItem (uint256 _id, uint256 _serial) public payable returns (bool){
         if ((_serial != 0) && (product[_id][_serial].owner == address(0)) && (product[_id][_serial].price == msg.value)
-        && (contentsForSale[_id].massSale == true) && (product[_id][_serial].seller != address(0))  ){
+        && (contentsForSale[_id].massSale == true) && (product[_id][_serial].seller != address(0))){
             DCSSCowner.transfer(commision);
             product[_id][_serial].creator.transfer(contentsForSale[_id].royality);
             product[_id][_serial].seller.transfer(msg.value - commision - contentsForSale[_id].royality);

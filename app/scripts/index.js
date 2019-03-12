@@ -25,11 +25,11 @@ const DCSSCinfo = async () => {
   }
   App.setDetails(
     "<br>Current DCSSC Owner Address: " +
-    (await owner) +
-    "<br>Current DCSSC Commision: " +
-    (await commision) +
-    "" +
-    msg,
+      (await owner) +
+      "<br>Current DCSSC Commision: " +
+      (await commision) +
+      "" +
+      msg,
     "0"
   );
 };
@@ -42,31 +42,31 @@ const DCSSClookupItem = async () => {
   const item2 = await instance.trackItem(id, serial, { from: account });
   App.setDetails(
     "<br>ID: " +
-    id +
-    "<br>Serial: " +
-    serial +
-    "<br>Title: " +
-    (await item1[0]) +
-    "<br>Description: " +
-    (await item1[1]) +
-    "<br>Version: " +
-    (await item1[2]) +
-    "<br>Hash Value: " +
-    (await item1[3]) +
-    "<br>Link: " +
-    (await item1[4]) +
-    "<br>Creator: " +
-    (await item2[0]) +
-    "<br>Authenticator: " +
-    (await item2[1]) +
-    "<br>Publisher: " +
-    (await item2[2]) +
-    "<br>Seller: " +
-    (await item2[3]) +
-    "<br>Owner: " +
-    (await item2[4]) +
-    "<br>Price: " +
-    (await item2[5]),
+      id +
+      "<br>Serial: " +
+      serial +
+      "<br>Title: " +
+      (await item1[0]) +
+      "<br>Description: " +
+      (await item1[1]) +
+      "<br>Version: " +
+      (await item1[2]) +
+      "<br>Hash Value: " +
+      (await item1[3]) +
+      "<br>Link: " +
+      (await item1[4]) +
+      "<br>Creator: " +
+      (await item2[0]) +
+      "<br>Authenticator: " +
+      (await item2[1]) +
+      "<br>Publisher: " +
+      (await item2[2]) +
+      "<br>Seller: " +
+      (await item2[3]) +
+      "<br>Owner: " +
+      (await item2[4]) +
+      "<br>Price: " +
+      (await item2[5]),
     "1"
   );
 };
@@ -74,42 +74,47 @@ const DCSSClookupItem = async () => {
 const DCSSCBuyItem = async () => {
   const instance = await DCSSC.deployed();
   const id = document.getElementById("id2").value;
-  const serial = document.getElementById("seria2").value;
+  const serial = document.getElementById("serial2").value;
   const item1 = await instance.trackItem(id, serial, { from: account });
-  await instance.BuyItem(id, serial, {
+  var temp = await item1[5];
+  temp = parseInt(temp);
+  await instance.buyItem(id, serial, {
     from: account,
     gasLimit: 100000,
-    value: await item1[5]
+    value: temp
   });
   var event = instance.ItemSold();
-  event.watch(function (error, result) {
+  event.watch(async function(error, result) {
     if (!error) {
-      if ((result.args.id == id) && (result.args.serial == serial)) {
-        const item3 = instance.trackItem(result.args.id, result.args.serial, { from: account });
+      if (result.args.id == id && result.args.serial == serial) {
+        const item3 = await instance.trackItem(
+          result.args.id,
+          result.args.serial,
+          { from: account }
+        );
         App.setDetails(
           "<br>ID: " +
-          id +
-          "<br>Serial: " +
-          serial +
-          "<br>Creator: " +
-          (await item3[0]) +
-          "<br>Authenticator: " +
-          (await item3[1]) +
-          "<br>Publisher: " +
-          (await item3[2]) +
-          "<br>Seller: " +
-          (await item3[3]) +
-          "<br>Owner: " +
-          (await item3[4]) +
-          "<br>Price: " +
-          (await item3[5]),
+            id +
+            "<br>Serial: " +
+            serial +
+            "<br>Creator: " +
+            (await item3[0]) +
+            "<br>Authenticator: " +
+            (await item3[1]) +
+            "<br>Publisher: " +
+            (await item3[2]) +
+            "<br>Seller: " +
+            (await item3[3]) +
+            "<br>Owner: " +
+            (await item3[4]) +
+            "<br>Price: " +
+            (await item3[5]),
           "2"
         );
-      };
+      }
     } else {
     }
   });
-
 };
 
 const DCSSCcreateContent = async () => {
@@ -120,19 +125,12 @@ const DCSSCcreateContent = async () => {
   const hash = document.getElementById("hash3").value;
   const link = document.getElementById("link3").value;
 
-  await instance.createItem(
-    title,
-    description,
-    version,
-    hash,
-    link,
-    {
-      from: account,
-      gasLimit: 100000
-    }
-  );
+  await instance.createItem(title, description, version, hash, link, {
+    from: account,
+    gasLimit: 100000
+  });
   var event = instance.ItemCreated();
-  event.watch(function (error, result) {
+  event.watch(async function(error, result) {
     if (!error) {
       if (result.args._address == account) {
         App.setDetails("<br>ID: " + result.args.id + "<br>Serial: " + 0, "3");
@@ -152,21 +150,23 @@ const DCSSCputContract = async () => {
     gasLimit: 100000
   });
   var event = instance.ContentPutForSale();
-  event.watch(function (error, result) {
+  event.watch(async function(error, result) {
     if (!error) {
       if (result.args.id == id) {
-        const item2 = await instance.getContentForSale(result.args.id, { from: account });
+        const item2 = await instance.getContentForSale(result.args.id, {
+          from: account
+        });
         App.setDetails(
           "<br>ID: " +
-          (await item2[0]) +
-          "<br>Auctioned: " +
-          (await item2[1]) +
-          "<br>Awarded: " +
-          (await item2[2]) +
-          "<br>Contract Price: " +
-          (await item2[4]) +
-          "<br>Royality: " +
-          (await item2[5]),
+            (await item2[0]) +
+            "<br>Auctioned: " +
+            (await item2[1]) +
+            "<br>Awarded: " +
+            (await item2[2]) +
+            "<br>Contract Price: " +
+            (await item2[4]) +
+            "<br>Royality: " +
+            (await item2[5]),
           "4"
         );
       }
@@ -179,31 +179,35 @@ const DCSSCbuyContract = async () => {
   const instance = await DCSSC.deployed();
   const id = document.getElementById("id5").value;
   const item1 = await instance.getContentForSale(id, { from: account });
+  var temp = await item1[4];
+  temp = parseInt(temp);
   await instance.buyContentForSale(id, {
     from: account,
     gasLimit: 100000,
-    value: await item1[4]
+    value: temp
   });
   var event = instance.ContentAwarded();
-  event.watch(function (error, result) {
+  event.watch(async function(error, result) {
     if (!error) {
       if (result.args.id == id) {
-        const item3 = await instance.trackItem(result.args.id, 0, { from: account });
+        const item3 = await instance.trackItem(result.args.id, 0, {
+          from: account
+        });
         App.setDetails(
           "<br>ID: " +
-          id +
-          "<br>Creator: " +
-          (await item3[0]) +
-          "<br>Authenticator: " +
-          (await item3[1]) +
-          "<br>Publisher: " +
-          (await item3[2]) +
-          "<br>Seller: " +
-          (await item3[3]) +
-          "<br>Owner: " +
-          (await item3[4]) +
-          "<br>Price: " +
-          (await item3[5]),
+            id +
+            "<br>Creator: " +
+            (await item3[0]) +
+            "<br>Authenticator: " +
+            (await item3[1]) +
+            "<br>Publisher: " +
+            (await item3[2]) +
+            "<br>Seller: " +
+            (await item3[3]) +
+            "<br>Owner: " +
+            (await item3[4]) +
+            "<br>Price: " +
+            (await item3[5]),
           "5"
         );
       }
@@ -221,25 +225,27 @@ const DCSSCauthenticate = async () => {
     gasLimit: 100000
   });
   var event = instance.ContentAuthenticated();
-  event.watch(function (error, result) {
+  event.watch(async function(error, result) {
     if (!error) {
       if (result.args.id == id) {
-        const item3 = await instance.trackItem(result.args.id, 0, { from: account });
+        const item3 = await instance.trackItem(result.args.id, 0, {
+          from: account
+        });
         App.setDetails(
           "<br>ID: " +
-          id +
-          "<br>Creator: " +
-          (await item3[0]) +
-          "<br>Authenticator: " +
-          (await item3[1]) +
-          "<br>Publisher: " +
-          (await item3[2]) +
-          "<br>Seller: " +
-          (await item3[3]) +
-          "<br>Owner: " +
-          (await item3[4]) +
-          "<br>Price: " +
-          (await item3[5]),
+            id +
+            "<br>Creator: " +
+            (await item3[0]) +
+            "<br>Authenticator: " +
+            (await item3[1]) +
+            "<br>Publisher: " +
+            (await item3[2]) +
+            "<br>Seller: " +
+            (await item3[3]) +
+            "<br>Owner: " +
+            (await item3[4]) +
+            "<br>Price: " +
+            (await item3[5]),
           "6"
         );
       }
@@ -250,26 +256,28 @@ const DCSSCauthenticate = async () => {
 
 const DCSSCmassSell = async () => {
   const instance = await DCSSC.deployed();
-  const id = document.getElementById("id6").value;
-  const price = document.getElementById("price8").value;
+  const id = document.getElementById("id7").value;
+  const price = document.getElementById("price7").value;
   await instance.putMassSale(id, price, {
     from: account,
     gasLimit: 100000
   });
   var event = instance.ContentMassSale();
-  event.watch(function (error, result) {
+  event.watch(async function(error, result) {
     if (!error) {
       if (result.args.id == id) {
-        const item2 = await instance.getContentForSale(result.args.id, { from: account });
+        const item2 = await instance.getContentForSale(result.args.id, {
+          from: account
+        });
         App.setDetails(
           "<br>ID: " +
-          (await item2[0]) +
-          "<br>Auctioned: " +
-          (await item2[1]) +
-          "<br>Awarded: " +
-          (await item2[2]) +
-          "<br>Mass Sale: " +
-          (await item2[3]),
+            (await item2[0]) +
+            "<br>Auctioned: " +
+            (await item2[1]) +
+            "<br>Awarded: " +
+            (await item2[2]) +
+            "<br>Mass Sale: " +
+            (await item2[3]),
           "7"
         );
       }
@@ -287,11 +295,11 @@ const DCSSCestimate = async () => {
   });
   App.setDetails(
     "<br>ID: " +
-    id +
-    "<br>Quantity: " +
-    quantity +
-    "<br>Estiamted Price: " +
-    (await item1),
+      id +
+      "<br>Quantity: " +
+      quantity +
+      "<br>Estiamted Price: " +
+      (await item1),
     "8"
   );
 };
@@ -303,23 +311,27 @@ const DCSSCmassBuy = async () => {
   const item1 = await instance.estimateMassSale(id, quantity, {
     from: account
   });
+  var temp = await item1;
+  temp = parseInt(temp);
   await instance.buyMassSale(id, quantity, {
     from: account,
     gasLimit: 100000,
-    value: await item1
+    value: item1
   });
   var event = instance.ContentMassBought();
-  event.watch(function (error, result) {
+  event.watch(async function(error, result) {
     if (!error) {
       if (result.args._address == account) {
-        const item2 = await instance.checkStock(result.args.id, account, { from: account });
+        const item2 = await instance.checkStock(result.args.id, account, {
+          from: account
+        });
         App.setDetails(
           "<br>ID: " +
-          id +
-          "<br>Quantity: " +
-          (await item2) +
-          "<br>Address: " +
-          account,
+            id +
+            "<br>Quantity: " +
+            (await item2) +
+            "<br>Address: " +
+            account,
           "9"
         );
       }
@@ -335,11 +347,11 @@ const DCSSCcheckStock = async () => {
   const item1 = await instance.checkStock(id, address, { from: account });
   App.setDetails(
     "<br>ID: " +
-    id +
-    "<br>Quantity: " +
-    (await item1) +
-    "<br>Address: " +
-    address,
+      id +
+      "<br>Quantity: " +
+      (await item1) +
+      "<br>Address: " +
+      address,
     "10"
   );
 };
@@ -348,56 +360,63 @@ const DCSSCsellItem = async () => {
   const instance = await DCSSC.deployed();
   const id = document.getElementById("id11").value;
   const price = document.getElementById("price11").value;
-  await instance.sellItem(id, price, { from: account });
-  var event = instance.ItemCreated();
-  event.watch(function (error, result) {
+  await instance.sellItem(id, price, { from: account, gasLimit: 100000 });
+  var event = instance.ItemPutForSale();
+  event.watch(async function(error, result) {
     if (!error) {
-      if ((result.args.id == id) && (result.args.serial == serial)) {
-        const item1 = await instance.getItem(result.args.id, result.args.serial, { from: account });
-        const item2 = await instance.trackItem(result.args.id, result.args.serial, { from: account });
+      if (result.args.id == id && result.args._address == account) {
+        const item1 = await instance.getItem(
+          result.args.id,
+          result.args.serial,
+          { from: account }
+        );
+        const item2 = await instance.trackItem(
+          result.args.id,
+          result.args.serial,
+          { from: account }
+        );
         App.setDetails(
           "<br>ID: " +
-          id +
-          "<br>Serial: " +
-          serial +
-          "<br>Title: " +
-          (await item1[0]) +
-          "<br>Description: " +
-          (await item1[1]) +
-          "<br>Version: " +
-          (await item1[2]) +
-          "<br>Hash Value: " +
-          (await item1[3]) +
-          "<br>Link: " +
-          (await item1[4]) +
-          "<br>Creator: " +
-          (await item2[0]) +
-          "<br>Authenticator: " +
-          (await item2[1]) +
-          "<br>Publisher: " +
-          (await item2[2]) +
-          "<br>Seller: " +
-          (await item2[3]) +
-          "<br>Owner: " +
-          (await item2[4]) +
-          "<br>Price: " +
-          (await item2[5]),
-          "1"
+            id +
+            "<br>Serial: " +
+            result.args.serial +
+            "<br>Title: " +
+            (await item1[0]) +
+            "<br>Description: " +
+            (await item1[1]) +
+            "<br>Version: " +
+            (await item1[2]) +
+            "<br>Hash Value: " +
+            (await item1[3]) +
+            "<br>Link: " +
+            (await item1[4]) +
+            "<br>Creator: " +
+            (await item2[0]) +
+            "<br>Authenticator: " +
+            (await item2[1]) +
+            "<br>Publisher: " +
+            (await item2[2]) +
+            "<br>Seller: " +
+            (await item2[3]) +
+            "<br>Owner: " +
+            (await item2[4]) +
+            "<br>Price: " +
+            (await item2[5]),
+          "11"
         );
       }
     } else {
     }
   });
-
 };
 
 const App = {
-  start: function () {
+  start: function() {
     const self = this;
 
     DCSSC.setProvider(web3.currentProvider);
 
-    web3.eth.getAccounts(function (err, accs) {
+    web3.eth.getAccounts(function(err, accs) {
       if (err != null) {
         alert("There was an error fetching your accounts.");
         return;
@@ -416,81 +435,81 @@ const App = {
     });
   },
 
-  setDetails: function (message, num) {
+  setDetails: function(message, num) {
     const status = document.getElementById("details" + num);
     status.innerHTML = message;
   },
 
-  DCSSC: function () {
+  DCSSC: function() {
     DCSSCinfo();
   },
 
-  lookup: function () {
+  lookup: function() {
     DCSSClookupItem();
   },
 
-  buyItem: function () {
+  buyItem: function() {
     DCSSCBuyItem();
   },
 
-  createContent: function () {
+  createContent: function() {
     DCSSCcreateContent();
   },
 
-  putContract: function () {
+  putContract: function() {
     DCSSCputContract();
   },
 
-  buyContract: function () {
+  buyContract: function() {
     DCSSCbuyContract();
   },
 
-  authenticate: function () {
+  authenticate: function() {
     DCSSCauthenticate();
   },
 
-  massSell: function () {
+  massSell: function() {
     DCSSCmassSell();
   },
 
-  estimate: function () {
+  estimate: function() {
     DCSSCestimate();
   },
 
-  massBuy: function () {
+  massBuy: function() {
     DCSSCmassBuy();
   },
 
-  checkStock: function () {
+  checkStock: function() {
     DCSSCcheckStock();
   },
 
-  sellItem: function () {
+  sellItem: function() {
     DCSSCsellItem();
   }
 };
 
 window.App = App;
 
-window.addEventListener("load", function () {
+window.addEventListener("load", function() {
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
   if (typeof web3 !== "undefined") {
     console.warn(
       "Using web3 detected from external source." +
-      " If you find that your accounts don't appear or you have 0 MetaCoin," +
-      " ensure you've configured that source properly." +
-      " If using MetaMask, see the following link." +
-      " Feel free to delete this warning. :)" +
-      " http://truffleframework.com/tutorials/truffle-and-metamask"
+        " If you find that your accounts don't appear or you have 0 MetaCoin," +
+        " ensure you've configured that source properly." +
+        " If using MetaMask, see the following link." +
+        " Feel free to delete this warning. :)" +
+        " http://truffleframework.com/tutorials/truffle-and-metamask"
     );
     // Use Mist/MetaMask's provider
     window.web3 = new Web3(web3.currentProvider);
   } else {
     console.warn(
       "No web3 detected. Falling back to http://127.0.0.1:9545." +
-      " You should remove this fallback when you deploy live, as it's inherently insecure." +
-      " Consider switching to Metamask for development." +
-      " More info here: http://truffleframework.com/tutorials/truffle-and-metamask"
+        " You should remove this fallback when you deploy live, as it's inherently insecure." +
+        " Consider switching to Metamask for development." +
+        " More info here: http://truffleframework.com/tutorials/truffle-and-metamask"
     );
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
     window.web3 = new Web3(
