@@ -110,6 +110,7 @@ const DCSSCcreateContent = async () => {
   const version = document.getElementById("version3").value;
   const hash = document.getElementById("hash3").value;
   const link = document.getElementById("link3").value;
+
   const item2 = await instance.createItem(
     title,
     description,
@@ -121,15 +122,14 @@ const DCSSCcreateContent = async () => {
       gasLimit: 100000
     }
   );
-  App.setDetails(
-    "<br>ID: " +
-      (await item2[0]) +
-      "<br>Serial: " +
-      (await item2[1]) +
-      "<br>Title: " +
-      (await item2[2]),
-    "3"
-  );
+  var event = instance.ItemCreated();
+  event.watch(function(error, result) {
+    if (!error) {
+      if (result.args._address == account)
+        App.setDetails("<br>ID: " + result.args.id + "<br>Serial: " + 0, "3");
+    } else {
+    }
+  });
 };
 
 const DCSSCputContract = async () => {
