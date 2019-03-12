@@ -42,6 +42,8 @@ contract DCSSC {
         _;
     }
     
+    event ItemCreated(uint256 id, address _address);
+
     event ContentPutForSale(uint256 id);
     
     event ContentAuthenticated(uint256 id);
@@ -50,7 +52,7 @@ contract DCSSC {
     
     event ContentMassSale(uint256 id);
     
-    event ContentMassBought(uint256 id, uint256 quantity);
+    event ContentMassBought(uint256 id, uint256 quantity, address _address);
     
     event ItemPutForSale(uint256 id, uint256 serial);
     
@@ -70,6 +72,7 @@ contract DCSSC {
         Content memory item = Content(_title,_desc,_version,_hash,0,_link,msg.sender,address(0),address(0),address(0),msg.sender,0);
         product[_count][0] = item;
         contentCounter++;
+        emit ItemCreated(_count, msg.sender);
         return (_count, 0, product[_count][0].title);
         }
     }
@@ -186,7 +189,7 @@ contract DCSSC {
         if ((contentsForSale[_id].massSale == true) && (estimateMassSale ( _id, _quantity) == msg.value)) {
             product[_id][0].publisher.transfer(msg.value);
             massBuyStock[_id][msg.sender] = _quantity;
-            emit ContentMassBought(_id,_quantity);
+            emit ContentMassBought(_id,_quantity, msg.sender);
             return true;
         }
         return false;
