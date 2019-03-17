@@ -1,5 +1,5 @@
 //require("babel-register");
-//var HDWalletProvider = require("truffle-hdwallet-provider");
+var HDWalletProvider = require("truffle-hdwallet-provider");
 
 /**
  * Use this file to configure your truffle project. It's seeded with some
@@ -45,6 +45,13 @@ module.exports = {
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
+    rinkeby: {
+      provider: function() {
+        // in this part fill your mnemonic and the infura link
+        return new HDWalletProvider("", "https://rinkeby.infura.io/v3/");
+      },
+      network_id: 1
+    },
     development: {
       host: "127.0.0.1", // Localhost (default: none)
       port: 8545, // Standard Ethereum port (default: none)
