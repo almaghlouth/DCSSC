@@ -20,8 +20,9 @@ This project is a simple digital assets supply chain from the creator to the buy
 
 ### Demo links
 
-- Demo Contract Address on Rinkeby: `0x4B06A036E81E8D1e6141f2840493aC19418c73FA`
-- Demo Transaction Address on Rinkeby : `0xb5dc125978aacdcafcce2ea0cefb176236edad6f67a18590da838ab12bbf08d2`
+- Demo Contract Address on Rinkeby: `0xf8D74e210b0CfEC7dCC1792C1d868BB9E0b18edf`
+- Demo Transaction Address on Rinkeby : `0x8e8db445f4a1336d3413295448033beb01227211312f52066cf5ea7c7a3d092d`
+- Link: `https://rinkeby.etherscan.io/address/0xf8d74e210b0cfec7dcc1792c1d868bb9e0b18edf#events`
 
 ### Diagrams
 
